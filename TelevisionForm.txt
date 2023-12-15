@@ -1,0 +1,204 @@
+Public Class TelevisionForm
+    Private tvVolume As Integer = 5
+    'possible global states
+    Private netflixOn As Boolean = False
+    Private showPlaying As Boolean = False
+    Private volumeControlMode As Boolean = False
+    'possible states for the buttons (scanning)
+    Private tvOff As Boolean = True
+    Private netflix As Boolean = False
+    'only two options in netflixOn mode
+    Private show1 As Boolean = False
+    Private show2 As Boolean = False
+    'options in showPlaying mode
+    Private volumeControl As Boolean = False
+    Private pause As Boolean = False
+    Private play As Boolean = False
+    Private rewind As Boolean = False
+    Private fastForward As Boolean = False
+    'only three options in volumeControlMode
+    Private volumeUp = False
+    Private volumeDown = False
+    Private exitVolumeControl = False
+    Private Sub Form1_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+        If e.KeyCode = Keys.Space Then
+            If tvOff = True Then
+                Me.Close()
+            ElseIf netflix = True Then
+                picShow1.Show()
+                picShow2.Show()
+                show1 = True
+                tvOff = False
+                netflix = False
+                netflixOn = True
+                picNetflix.Hide()
+            ElseIf show1 = True Then
+                showPlaying = True
+                lblTVVolume.Text = tvVolume.ToString()
+                lblPlaying1.Show()
+                netflixOn = False
+                tvOff = True
+                show1 = False
+            ElseIf show2 = True Then
+                showPlaying = True
+                lblTVVolume.Text = tvVolume.ToString()
+                lblPlaying2.Show()
+                netflixOn = False
+                tvOff = True
+                show2 = False
+            ElseIf volumeControl = True Then
+                volumeControl = False
+                volumeControlMode = True
+                exitVolumeControl = True
+                btnVolumeControl.Enabled = False
+
+                'pause,play,rewind,FF
+            ElseIf pause = True Then
+                picPause.Show()
+                picPlay.Hide()
+                picRewind.Hide()
+                picFastForward.Hide()
+            ElseIf play = True Then
+                picPause.Hide()
+                picPlay.Show()
+                picRewind.Hide()
+                picFastForward.Hide()
+            ElseIf rewind = True Then
+                picPause.Hide()
+                picPlay.Hide()
+                picRewind.Show()
+                picFastForward.Hide()
+            ElseIf fastForward = True Then
+                picPause.Hide()
+                picPlay.Hide()
+                picRewind.Hide()
+                picFastForward.Show()
+            ElseIf volumeUp = True Then
+                If tvVolume < 10 Then
+                    tvVolume = tvVolume + 1
+                    lblTVVolume.Text = tvVolume.ToString()
+                End If
+            ElseIf volumeDown = True Then
+                If tvVolume > 1 Then
+                    tvVolume = tvVolume - 1
+                    lblTVVolume.Text = tvVolume.ToString()
+                End If
+            ElseIf exitVolumeControl = True Then
+                volumeControlMode = False
+                btnExitVolumeControlMode.Enabled = False
+                tvOff = True
+            End If
+        End If
+    End Sub
+    Protected Overrides Sub OnPaint(ByVal e As System.Windows.Forms.PaintEventArgs)
+        MyBase.OnPaint(e)
+        Using pen As New Pen(Color.Red)
+            If tvOff = True Then
+                e.Graphics.DrawRectangle(pen, btnTVOff.Location.X - 10, btnTVOff.Location.Y - 10, btnTVOff.Width + 20, btnTVOff.Height + 20)
+            ElseIf netflix = True Then
+                e.Graphics.DrawRectangle(pen, picNetflix.Location.X - 10, picNetflix.Location.Y - 10, picNetflix.Width + 20, picNetflix.Height + 20)
+            ElseIf show1 = True Then
+                e.Graphics.DrawRectangle(pen, picShow1.Location.X - 10, picShow1.Location.Y - 10, picShow1.Width + 20, picShow1.Height + 20)
+            ElseIf show2 = True Then
+                e.Graphics.DrawRectangle(pen, picShow2.Location.X - 10, picShow2.Location.Y - 10, picShow2.Width + 20, picShow2.Height + 20)
+            ElseIf volumeControl = True Then
+                e.Graphics.DrawRectangle(pen, btnVolumeControl.Location.X - 10, btnVolumeControl.Location.Y - 10, btnVolumeControl.Width + 20, btnVolumeControl.Height + 20)
+            ElseIf pause = True Then
+                e.Graphics.DrawRectangle(pen, btnPause.Location.X - 10, btnPause.Location.Y - 10, btnPause.Width + 20, btnPause.Height + 20)
+            ElseIf play = True Then
+                e.Graphics.DrawRectangle(pen, btnPlay.Location.X - 10, btnPlay.Location.Y - 10, btnPlay.Width + 20, btnPlay.Height + 20)
+            ElseIf rewind = True Then
+                e.Graphics.DrawRectangle(pen, btnTVRewind.Location.X - 10, btnTVRewind.Location.Y - 10, btnTVRewind.Width + 20, btnTVRewind.Height + 20)
+            ElseIf fastForward = True Then
+                e.Graphics.DrawRectangle(pen, btnTVFastForward.Location.X - 10, btnTVFastForward.Location.Y - 10, btnTVFastForward.Width + 20, btnTVFastForward.Height + 20)
+            ElseIf volumeUp = True Then
+                e.Graphics.DrawRectangle(pen, picTVVolUp.Location.X - 10, picTVVolUp.Location.Y - 10, picTVVolUp.Width + 20, picTVVolUp.Height + 20)
+            ElseIf volumeDown = True Then
+                e.Graphics.DrawRectangle(pen, PicTVVolDown.Location.X - 10, PicTVVolDown.Location.Y - 10, PicTVVolDown.Width + 20, PicTVVolDown.Height + 20)
+            ElseIf exitVolumeControl = True Then
+                e.Graphics.DrawRectangle(pen, btnExitVolumeControlMode.Location.X - 10, btnExitVolumeControlMode.Location.Y - 10, btnExitVolumeControlMode.Width + 20, btnExitVolumeControlMode.Height + 20)
+            End If
+        End Using
+        'Add your custom paint code here
+    End Sub
+
+    Private Sub tmrTelevisionScanner_Tick(sender As Object, e As EventArgs) Handles tmrTelevisionScanner.Tick
+        'cycling between the two shows
+        If netflixOn = True Then
+            If show1 = True Then
+                show1 = False
+                show2 = True
+            ElseIf show2 = True Then
+                show1 = True
+                show2 = False
+            End If
+        End If
+        'cycling among the volumeControlMode options
+        If volumeControlMode = True Then
+            If volumeUp = True Then
+                volumeUp = False
+                volumeDown = True
+            ElseIf volumeDown = True Then
+                exitVolumeControl = True
+                btnExitVolumeControlMode.Enabled = True
+                volumeDown = False
+            ElseIf exitVolumeControl = True Then
+                exitVolumeControl = False
+                volumeUp = True
+                btnExitVolumeControlMode.Enabled = False
+            End If
+
+        End If
+        If tvOff = True Then
+            If showPlaying = False Then
+                btnTVOff.Enabled = False
+                netflix = True
+                tvOff = False
+            ElseIf showPlaying = True Then
+                volumeControl = True
+                btnVolumeControl.Enabled = True
+                tvOff = False
+                btnTVOff.Enabled = False
+            End If
+
+        ElseIf netflix = True Then
+
+            netflix = False
+            btnTVOff.Enabled = True
+            tvOff = True
+
+
+        ElseIf volumeControl = True Then
+            volumeControl = False
+            pause = True
+            btnPause.Enabled = True
+            btnVolumeControl.Enabled = False
+        ElseIf pause = True Then
+            pause = False
+            play = True
+            btnPlay.Enabled = True
+            btnPause.Enabled = False
+        ElseIf play = True Then
+            play = False
+            rewind = True
+            btnTVRewind.Enabled = True
+            btnPlay.Enabled = False
+        ElseIf rewind = True Then
+            rewind = False
+            fastForward = True
+            btnTVFastForward.Enabled = True
+            btnTVRewind.Enabled = False
+        ElseIf fastForward = True Then
+            fastForward = False
+            tvOff = True
+            btnTVOff.Enabled = True
+            btnTVFastForward.Enabled = False
+
+
+
+
+
+        End If
+        Refresh()
+    End Sub
+End Class

@@ -1,0 +1,134 @@
+Public Class MusicForm
+    Private volume As Integer = 5
+    Private currentSong As String = "Now Playing: Song 1"
+    Private exitMusic As Boolean = True
+    Private shuffle As Boolean = False
+    Private pause As Boolean = False
+    Private play As Boolean = False
+    Private prevSong As Boolean = False
+    Private nextSong As Boolean = False
+    Private volumeUp As Boolean = False
+    Private volumeDown As Boolean = False
+
+
+    Private Sub Form1_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+        If e.KeyCode = Keys.Space Then
+            If exitMusic = True Then
+                Me.Close()
+            ElseIf shuffle = True Then
+                lblCurrentSong.Text = currentSong.ToString()
+                picPlay.Show()
+            ElseIf pause = True Then
+                picPause.Show()
+                picPlay.Hide()
+            ElseIf play = True Then
+                picPause.Hide()
+                picPlay.Show()
+            ElseIf prevSong = True Then
+                If currentSong = "Now Playing: Song 1" Then
+                    currentSong = "Now Playing: Song 3"
+                    lblCurrentSong.Text = currentSong
+                ElseIf currentSong = "Now Playing: Song 2" Then
+                    currentSong = "Now Playing: Song 1"
+                    lblCurrentSong.Text = currentSong
+                ElseIf currentSong = "Now Playing: Song 3" Then
+                    currentSong = "Now Playing: Song 2"
+                    lblCurrentSong.Text = currentSong
+                End If
+            ElseIf nextSong = True Then
+                If currentSong = "Now Playing: Song 1" Then
+                    currentSong = "Now Playing: Song 2"
+                    lblCurrentSong.Text = currentSong
+                ElseIf currentSong = "Now Playing: Song 2" Then
+                    currentSong = "Now Playing: Song 3"
+                    lblCurrentSong.Text = currentSong
+                ElseIf currentSong = "Now Playing: Song 3" Then
+                    currentSong = "Now Playing: Song 1"
+                    lblCurrentSong.Text = currentSong
+                End If
+            ElseIf volumeUp = True Then
+                If volume < 10 Then
+                    volume = volume + 1
+                    lblVolume.Text = volume.ToString()
+                End If
+            ElseIf volumeDown = True Then
+                If volume > 1 Then
+                    volume = volume - 1
+                    lblVolume.Text = volume.ToString()
+                End If
+            End If
+        End If
+    End Sub
+    Protected Overrides Sub OnPaint(ByVal e As System.Windows.Forms.PaintEventArgs)
+        MyBase.OnPaint(e)
+        Using pen As New Pen(Color.Red)
+            If exitMusic = True Then
+                e.Graphics.DrawRectangle(pen, btnExitMusic.Location.X - 10, btnExitMusic.Location.Y - 10, btnExitMusic.Width + 20, btnExitMusic.Height + 20)
+            ElseIf shuffle = True Then
+                e.Graphics.DrawRectangle(pen, btnShuffle.Location.X - 10, btnShuffle.Location.Y - 10, btnShuffle.Width + 20, btnShuffle.Height + 20)
+            ElseIf pause = True Then
+                e.Graphics.DrawRectangle(pen, btnPause.Location.X - 10, btnPause.Location.Y - 10, btnPause.Width + 20, btnPause.Height + 20)
+            ElseIf play = True Then
+                e.Graphics.DrawRectangle(pen, btnPlay.Location.X - 10, btnPlay.Location.Y - 10, btnPlay.Width + 20, btnPlay.Height + 20)
+            ElseIf prevSong = True Then
+                e.Graphics.DrawRectangle(pen, btnPrev.Location.X - 10, btnPrev.Location.Y - 10, btnPrev.Width + 20, btnPrev.Height + 20)
+            ElseIf nextSong = True Then
+                e.Graphics.DrawRectangle(pen, btnNext.Location.X - 10, btnNext.Location.Y - 10, btnNext.Width + 20, btnNext.Height + 20)
+            ElseIf volumeDown = True Then
+                e.Graphics.DrawRectangle(pen, picVolDown.Location.X - 10, picVolDown.Location.Y - 10, picVolDown.Width + 20, picVolDown.Height + 20)
+            ElseIf volumeUp = True Then
+                e.Graphics.DrawRectangle(pen, picVolUp.Location.X - 10, picVolUp.Location.Y - 10, picVolUp.Width + 20, picVolUp.Height + 20)
+            End If
+        End Using
+        'Add your custom paint code here
+    End Sub
+
+    Private Sub tmrMusicScanner_Tick(sender As Object, e As EventArgs) Handles tmrMusicScanner.Tick
+        If exitMusic = True Then
+            exitMusic = False
+            btnExitMusic.Enabled = False
+            shuffle = True
+            btnShuffle.Enabled = True
+        ElseIf shuffle = True Then
+            shuffle = False
+            btnShuffle.Enabled = False
+            pause = True
+            btnPause.Enabled = True
+        ElseIf pause = True Then
+            pause = False
+            btnPause.Enabled = False
+            btnPlay.Enabled = True
+            play = True
+        ElseIf play = True Then
+            btnPlay.Enabled = False
+            play = False
+            prevSong = True
+            btnPrev.Enabled = True
+        ElseIf prevSong = True Then
+            prevSong = False
+            btnPrev.Enabled = False
+            nextSong = True
+            btnNext.Enabled = True
+        ElseIf nextSong = True Then
+            nextSong = False
+            btnNext.Enabled = False
+            volumeUp = True
+        ElseIf volumeUp = True Then
+            volumeUp = False
+            volumeDown = True
+        ElseIf volumeDown = True Then
+            volumeDown = False
+            btnExitMusic.Enabled = True
+            exitMusic = True
+
+
+
+
+        End If
+        Refresh()
+    End Sub
+
+    Private Sub MusicForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        lblVolume.Text = volume.ToString()
+    End Sub
+End Class

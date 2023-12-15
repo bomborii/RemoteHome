@@ -1,0 +1,47 @@
+Public Class EntertainmentForm
+
+    'scanning for tv and music
+    Private television As Boolean = False
+    'music is first option
+    Private music As Boolean = True
+
+    Private Sub Form1_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+        If e.KeyCode = Keys.Space Then
+            If music = True Then
+                Dim NewForm As New MusicForm()
+                NewForm.Show()
+            ElseIf television = True Then
+                Dim NewForm As New TelevisionForm()
+                NewForm.Show()
+            End If
+            Me.Close()
+        End If
+    End Sub
+    Protected Overrides Sub OnPaint(ByVal e As System.Windows.Forms.PaintEventArgs)
+        MyBase.OnPaint(e)
+        Using pen As New Pen(Color.Red)
+            If music = True Then
+                e.Graphics.DrawRectangle(pen, btnMusic.Location.X - 10, btnMusic.Location.Y - 10, btnMusic.Width + 20, btnMusic.Height + 20)
+            ElseIf television = True Then
+                e.Graphics.DrawRectangle(pen, btnTelevision.Location.X - 10, btnTelevision.Location.Y - 10, btnTelevision.Width + 20, btnTelevision.Height + 20)
+            End If
+        End Using
+        'Add your custom paint code here
+    End Sub
+
+    Private Sub tmrEntertainmentScanner_Tick(sender As Object, e As EventArgs) Handles tmrEntertainmentScanner.Tick
+        If music = True Then
+            btnMusic.Enabled = False
+            btnTelevision.Enabled = True
+            music = False
+            television = True
+        ElseIf television = True Then
+            television = False
+            btnTelevision.Enabled = False
+            btnMusic.Enabled = True
+            music = True
+
+        End If
+        Refresh()
+    End Sub
+End Class
